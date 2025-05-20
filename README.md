@@ -19,6 +19,8 @@
 
 ## 🛠️ Installation
 
+**Download from the release page, or:**
+-
 1. **Clone this repo:**
    ```bash
    git clone https://github.com/yourusername/TF2ConfigManager.git
@@ -42,20 +44,23 @@
 1. **Set your TF2 folder:**  
    Click "Change tf Folder" and select your `tf` directory (should contain `cfg` and `custom`).
 
-2. **Create a new profile:**  
-   - Import from your current TF2 folder, or  
+2. **Import your current profile:**  
+   - It is reccomended to import from your current TF2 folder, or  
    - Import from any `cfg`/`custom` folders.
 
-3. **Switch profiles:**  
+3. **Refresh profiles:**
+   - Press the "Refresh Profiles" button to mark your imported config as current.
+
+4. **Switch profiles:**  
    Select a profile and click "Apply Profile" to instantly swap configs.
 
-4. **Edit or delete profiles:**  
+5. **Edit or delete profiles:**  
    Use the "Edit" and "Delete" buttons for easy management.
 
-5. **Fresh install:**  
+6. **Fresh install:**  
    Use "Fresh Install" to wipe your TF2 config. You have to verify game files in Steam after.
 
-6. **Need help?**  
+7. **Need help?**  
    Click the `?` button for a full FAQ and help dialog.
 
 ---
@@ -85,7 +90,7 @@
 ## 🧑‍🎨 Credits
 
 - UI: [CustomTkinter](https://customtkinter.tomschimansky.com/)
-- Made with ❤️ by Rndaom
+- Made with ❤️ by [Rndaom](https://steamcommunity.com/id/rndaomrandom/)
 
 ---
 

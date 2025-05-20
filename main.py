@@ -6,6 +6,7 @@ from tkinter import filedialog, messagebox, simpledialog
 import configparser
 import json
 import hashlib
+import sys
 
 APP_NAME = "TF2 Config Manager"
 CONFIG_FILE = "config.ini"
@@ -79,9 +80,29 @@ def load_profile_metadata(profile_path):
     except Exception:
         return {'name': os.path.basename(profile_path), 'description': '', 'launch_options': ''}
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+def apply_icon(widget):
+    """Set icon on a CTk window and ensure it sticks (CTk overrides after 200 ms)."""
+    path = resource_path("icon.ico")
+    try:
+        widget.iconbitmap(path)
+        # re-apply after CTk's delayed default-icon setter runs (200 ms)
+        widget.after(300, lambda: widget.iconbitmap(path))
+    except Exception as e:
+        try:
+            ctk.CTkLabel(widget, text=f"[icon error] {e}", text_color="#FF5555").pack()
+        except Exception:
+            pass
+
 def list_profiles():
-    ensure_dir(PROFILES_DIR)
-    return [os.path.join(PROFILES_DIR, d) for d in os.listdir(PROFILES_DIR) if os.path.isdir(os.path.join(PROFILES_DIR, d))]
+    ensure_dir(resource_path(PROFILES_DIR))
+    return [os.path.join(resource_path(PROFILES_DIR), d) for d in os.listdir(resource_path(PROFILES_DIR)) if os.path.isdir(os.path.join(resource_path(PROFILES_DIR), d))]
 
 def folder_hash(folder):
     """Make a hash of everything in a folder."""
@@ -175,7 +196,7 @@ class ThemedInfoDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title(title)
         self.geometry("420x180")
@@ -190,7 +211,7 @@ class ThemedErrorDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title(title)
         self.geometry("420x180")
@@ -205,7 +226,7 @@ class InfoDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("Welcome to TF2 Config Manager")
         self.geometry("420x260")
@@ -236,7 +257,7 @@ class EditProfileDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("Edit Profile")
         self.geometry("400x300")
@@ -272,7 +293,7 @@ class DeleteProfileDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("Delete Profile")
         self.geometry("380x160")
@@ -298,7 +319,7 @@ class NewProfileDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("New Profile")
         self.geometry("350x160")
@@ -319,7 +340,7 @@ class CustomImportProfileDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("New Profile from Folders")
         self.geometry("440x420")  # Reduced height
@@ -410,7 +431,7 @@ class HelpDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("TF2 Config Manager - Help & FAQ")
         self.geometry("540x480")
@@ -439,7 +460,7 @@ class ApplyProfileDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("Apply Profile")
         self.geometry("400x180")
@@ -464,10 +485,7 @@ class NoProfileSelectedDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        try:
-            self.iconbitmap("icon.ico")
-        except Exception:
-            pass
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("No Profile Selected")
         self.geometry("340x140")
@@ -482,7 +500,7 @@ class FreshInstallDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("Fresh Install Confirmation")
         self.geometry("420x200")
@@ -517,7 +535,7 @@ class ThemedNewProfileDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title("New Profile")
         self.geometry("420x340")
@@ -554,7 +572,7 @@ class ThemedConfirmDialog(ctk.CTkToplevel):
         self.grab_set()
         self.focus()
         self.lift()
-        self.iconbitmap("icon.ico")
+        apply_icon(self)
         self.configure(fg_color="#181818")
         self.title(title)
         self.geometry("420x180")
@@ -788,7 +806,7 @@ class ProfileManager(ctk.CTkFrame):
         def import_from_custom():
             def on_submit(name, desc, launch_opts, cfg_folder, custom_folder):
                 profile_id = name.replace(' ', '_')
-                profile_path = os.path.join(PROFILES_DIR, profile_id)
+                profile_path = os.path.join(resource_path(PROFILES_DIR), profile_id)
                 if os.path.exists(profile_path):
                     ThemedErrorDialog(self, "A profile with this name already exists.")
                     return
@@ -809,7 +827,7 @@ class ProfileManager(ctk.CTkFrame):
     def _create_profile_from_folder(self, tf_folder):
         def on_submit(name, desc, launch_opts):
             profile_id = name.replace(' ', '_')
-            profile_path = os.path.join(PROFILES_DIR, profile_id)
+            profile_path = os.path.join(resource_path(PROFILES_DIR), profile_id)
             if os.path.exists(profile_path):
                 ThemedErrorDialog(self, "A profile with this name already exists.")
                 return
@@ -899,13 +917,10 @@ class TF2ConfigManagerApp(ctk.CTk):
         self.title(APP_NAME)
         self.geometry("620x600")  # Increased window size
         self.resizable(True, True)  # Allow resizing
-        try:
-            self.iconbitmap("icon.ico")
-        except Exception:
-            pass
+        apply_icon(self)
         self.font = ("Segoe UI", 10)
         self.configure(fg_color="#181818")
-        ensure_dir(PROFILES_DIR)
+        ensure_dir(resource_path(PROFILES_DIR))
         self.config_parser = load_config()
         if 'DEFAULT' not in self.config_parser:
             self.config_parser['DEFAULT'] = {}
@@ -913,14 +928,7 @@ class TF2ConfigManagerApp(ctk.CTk):
         self.after(100, self.startup_flow)
 
     def startup_flow(self):
-        if self.first_launch:
-            self.withdraw()
-            def on_close():
-                self.deiconify()
-                self.show_main()
-            InfoDialog(self, on_close)
-        else:
-            self.show_main()
+        self.show_main()
 
     def show_main(self):
         for widget in self.winfo_children():
