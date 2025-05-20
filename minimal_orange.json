@@ -1,0 +1,37 @@
+{
+  "CTk": {
+    "fg_color": ["#181818", "#181818"],
+    "bg_color": ["#181818", "#181818"]
+  },
+  "CTkButton": {
+    "fg_color": ["#FFA559", "#FFA559"],
+    "hover_color": ["#FFB877", "#FFB877"],
+    "text_color": ["#181818", "#181818"],
+    "corner_radius": 12
+  },
+  "CTkEntry": {
+    "fg_color": ["#232323", "#232323"],
+    "text_color": ["#FFFFFF", "#FFFFFF"],
+    "border_color": ["#444444", "#444444"],
+    "corner_radius": 8
+  },
+  "CTkLabel": {
+    "text_color": ["#FFFFFF", "#FFFFFF"]
+  },
+  "CTkFrame": {
+    "fg_color": ["#232323", "#232323"],
+    "corner_radius": 16
+  },
+  "CTkCheckBox": {
+    "fg_color": ["#232323", "#232323"],
+    "border_color": ["#444444", "#444444"],
+    "text_color": ["#FFFFFF", "#FFFFFF"],
+    "hover_color": ["#FFA559", "#FFA559"]
+  },
+  "CTkTextbox": {
+    "fg_color": ["#232323", "#232323"],
+    "text_color": ["#FFFFFF", "#FFFFFF"],
+    "border_color": ["#444444", "#444444"],
+    "corner_radius": 8
+  }
+} 
