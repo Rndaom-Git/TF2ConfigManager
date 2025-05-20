@@ -59,10 +59,91 @@ def restore_folders(profile_dir, tf2_dir):
             shutil.copytree(src, dst)
 
 def delete_folders(tf2_dir):
-    for folder in ['cfg', 'custom']:
-        path = os.path.join(tf2_dir, folder)
-        if os.path.exists(path):
-            shutil.rmtree(path)
+    import os
+    # List of default files/folders in tf/cfg (provided by user)
+    DEFAULT_CFG = set([
+        'unencrypted',
+        '360controller.cfg',
+        '360controller-linux.cfg',
+        'chapter1.cfg',
+        'chapter2.cfg',
+        'chapter3.cfg',
+        'config_default.cfg',
+        'mapcycle_beta_asteroid.txt',
+        'mapcycle_beta_ctf_2fort.txt',
+        'mapcycle_beta_mannpower.txt',
+        'mapcycle_default.txt',
+        'mapcycle_doomsday_event_247.txt',
+        'mapcycle_featured_maps.txt',
+        'mapcycle_halloween.txt',
+        'mapcycle_halloween_event_247.txt',
+        'mapcycle_hightower_event_247.txt',
+        'mapcycle_invasion_maps.txt',
+        'mapcycle_ladder.txt',
+        'mapcycle_lakeside_event_247.txt',
+        'mapcycle_mannpower.txt',
+        'mapcycle_quickplay_arena.txt',
+        'mapcycle_quickplay_attackdefense.txt',
+        'mapcycle_quickplay_ctf.txt',
+        'mapcycle_quickplay_koth.txt',
+        'mapcycle_quickplay_misc.txt',
+        'mapcycle_quickplay_passtime.txt',
+        'mapcycle_quickplay_payload.txt',
+        'mapcycle_quickplay_payloadrace.txt',
+        'motd_default.txt',
+        'motd_text_default.txt',
+        'mtp.cfg',
+        'pure_server_full.txt',
+        'pure_server_minimal.txt',
+        'pure_server_whitelist_example.txt',
+        'replay_example.cfg',
+        'server_247_mannpower.cfg',
+        'server_247_rounds.cfg',
+        'server_bootcamp.cfg',
+        'server_casual.cfg',
+        'server_casual_max_rounds_win_conditions.cfg',
+        'server_casual_max_rounds_win_conditions_custom.cfg',
+        'server_casual_max_rounds_win_conditions_mannpower.cfg',
+        'server_casual_rounds_win_conditions.cfg',
+        'server_casual_stopwatch_win_conditions.cfg',
+        'server_competitive.cfg',
+        'server_competitive_max_rounds_win_conditions.cfg',
+        'server_competitive_max_rounds_win_conditions_high_skill.cfg',
+        'server_competitive_rounds_win_conditions.cfg',
+        'server_competitive_rounds_win_conditions_high_skill.cfg',
+        'server_competitive_stopwatch_win_conditions.cfg',
+        'server_competitive_stopwatch_win_conditions_high_skill.cfg',
+        'server_custom.cfg',
+        'server_limited_rounds.cfg',
+        'server_limited_time.cfg',
+        'server_mannup.cfg',
+        'server_matchmaking_base.cfg',
+        'server_mvm.cfg',
+        'server_net_chan_extend.cfg',
+        'sfm_defaultanimationgroups.txt',
+        'sourcevr_tf.cfg',
+        'trusted_keys_base.txt',
+        'trusted_keys_example.txt',
+        'undo360controller.cfg',
+        'vscript_convar_allowlist.txt',
+    ])
+    # Delete everything in tf/custom
+    custom_path = os.path.join(tf2_dir, 'custom')
+    if os.path.exists(custom_path):
+        shutil.rmtree(custom_path)
+    # Delete only non-default files/folders in tf/cfg
+    cfg_path = os.path.join(tf2_dir, 'cfg')
+    if os.path.exists(cfg_path):
+        for entry in os.listdir(cfg_path):
+            if entry not in DEFAULT_CFG:
+                full_path = os.path.join(cfg_path, entry)
+                try:
+                    if os.path.isdir(full_path):
+                        shutil.rmtree(full_path)
+                    else:
+                        os.remove(full_path)
+                except Exception:
+                    pass
 
 def save_profile_metadata(profile_path, name, desc, launch_options):
     meta = {
@@ -638,7 +719,8 @@ class ProfileManager(ctk.CTkFrame):
         # Profile listbox with modern style
         listbox_frame = ctk.CTkFrame(profile_section, fg_color="transparent")
         listbox_frame.pack(pady=(0, 8))
-        # TODO: Replace tk.Listbox with a custom CTk widget for full theming
+        # Add a vertical scrollbar to the profile listbox
+        scrollbar = tk.Scrollbar(listbox_frame, orient="vertical")
         self.profile_listbox = tk.Listbox(
             listbox_frame,
             width=32,
@@ -652,8 +734,10 @@ class ProfileManager(ctk.CTkFrame):
             bd=0,
             fg="#ffffff",
             activestyle='none',
+            yscrollcommand=scrollbar.set
         )
-        self.profile_listbox.pack(padx=8, pady=2)
+        scrollbar.config(command=self.profile_listbox.yview)
+        self.profile_listbox.pack(side="left", padx=8, pady=2, fill="y")
         self.profile_listbox.bind('<<ListboxSelect>>', self.on_select)
         self.bind('<<TFRefresh>>', lambda e: self.refresh_profiles())
 
